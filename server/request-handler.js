@@ -39,7 +39,12 @@ module.exports = function requestHandler(request, response) {
   );
 
   // The outgoing status.
-  var statusCode = 200;
+  var statusCode;
+  if (request.method === 'GET') {
+    statusCode = 200;
+  } else if (request.method === 'POST') {
+    statusCode = 201;
+  }
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
