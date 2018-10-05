@@ -12,6 +12,9 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var data = require('./data.js');
+var hexToString = require('./helperFunctions.js');
+
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -44,6 +47,9 @@ module.exports = function requestHandler(request, response) {
     statusCode = 200;
   } else if (request.method === 'POST') {
     statusCode = 201;
+    request.on('data', chunk => {
+      data.results.push(chunk.toString());
+    });
   }
 
   // See the note below about CORS headers.
@@ -66,7 +72,8 @@ module.exports = function requestHandler(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify({ results: [] }));
+  console.log('DATA: ', data);
+  response.end(JSON.stringify(data));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
