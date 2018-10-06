@@ -15,6 +15,7 @@ this file and include it in basic-server.js so that it actually works.
 var data = require('./data.js');
 var getHandler = require('./httpMethodHandlers/GET-handler.js');
 var postHandler = require('./httpMethodHandlers/POST-handler.js');
+var optionsHandler = require('./httpMethodHandlers/OPTIONS-handler.js');
 var errorHandler = require('./httpMethodHandlers/ERROR-handler.js');
 
 // var defaultCorsHeaders = {
@@ -44,7 +45,9 @@ var requestHandler = function(request, response) {
   );
 
   // The outgoing status.
-  if (request.url !== '/classes/messages') {
+  if (request.method === 'OPTIONS') {
+    optionsHandler(request, response);
+  } else if (request.url !== '/classes/messages') {
     errorHandler(request, response);
   } else if (request.method === 'GET') {
     getHandler(request, response);
