@@ -13,14 +13,16 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 
 var data = require('./data.js');
-var hexToString = require('./helperFunctions.js');
+var getHandler = require('./httpMethodHandlers/GET-handler.js');
+var postHandler = require('./httpMethodHandlers/POST-handler.js');
+var errorHandler = require('./httpMethodHandlers/ERROR-handler.js');
 
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
+// var defaultCorsHeaders = {
+//   'access-control-allow-origin': '*',
+//   'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+//   'access-control-allow-headers': 'content-type, accept',
+//   'access-control-max-age': 10 // Seconds.
+// };
 
 module.exports = function requestHandler(request, response) {
   // Request and Response come from node's http module.
@@ -42,46 +44,46 @@ module.exports = function requestHandler(request, response) {
   );
 
   // The outgoing status.
-  var statusCode;
-  if (request.method === 'GET') {
-    statusCode = 200;
-  } else if (request.method === 'POST') {
-    statusCode = 201;
-    request.on('data', chunk => {
-      data.results.push(JSON.parse(chunk.toString()));
-    });
-  }
-
   if (request.url !== '/classes/messages') {
-    statusCode = 404;
+    errorHandler(request, response);
+  } else if (request.method === 'GET') {
+    getHandler(request, response);
+  } else if (request.method === 'POST') {
+    postHandler(request, response);
   }
 
-  // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
+  // if (request.url !== '/classes/messages') {
+  //   statusCode = 404;
+  // }
 
-  // Tell the client we are sending them plain text.
-  //
-  // You will need to change this if you are sending something
-  // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'application/json';
+  // // See the note below about CORS headers.
+  // var headers = defaultCorsHeaders;
 
-  // .writeHead() writes to the request line and headers of the response,
-  // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
+  // // Tell the client we are sending them plain text.
+  // //
+  // // You will need to change this if you are sending something
+  // // other than plain text, like JSON or HTML.
+  // headers['Content-Type'] = 'application/json';
 
-  // Make sure to always call response.end() - Node may not send
-  // anything back to the client until you do. The string you pass to
-  // response.end() will be the body of the response - i.e. what shows
-  // up in the browser.
-  //
-  // Calling .end "flushes" the response's internal buffer, forcing
-  // node to actually send all the data over to the client.
-  console.log('DATA: ', data, ' STATUS CODE ', statusCode);
-  if (statusCode === 200 || statusCode === 201) {
-    response.end(JSON.stringify(data));
-  } else if (statusCode === 404) {
-    response.end();
-  }
+  // // .writeHead() writes to the request line and headers of the response,
+  // // which includes the status and all headers.
+  // response.writeHead(statusCode, headers);
+
+  // // Make sure to always call response.end() - Node may not send
+  // // anything back to the client until you do. The string you pass to
+  // // response.end() will be the body of the response - i.e. what shows
+  // // up in the browser.
+  // //
+  // // Calling .end "flushes" the response's internal buffer, forcing
+  // // node to actually send all the data over to the client.
+  // console.log('DATA: ', data, ' STATUS CODE ', statusCode);
+  // if (statusCode === 200) {
+  //   response.end(JSON.stringify(data));
+  // } else if (statusCode === 201) {
+  //   response.end();
+  // } else if (statusCode === 404) {
+  //   response.end();
+  // }
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
