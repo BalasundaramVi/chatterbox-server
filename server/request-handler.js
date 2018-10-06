@@ -24,7 +24,7 @@ var errorHandler = require('./httpMethodHandlers/ERROR-handler.js');
 //   'access-control-max-age': 10 // Seconds.
 // };
 
-module.exports = function requestHandler(request, response) {
+var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -86,6 +86,7 @@ module.exports = function requestHandler(request, response) {
   // }
 };
 
+exports.requestHandler = requestHandler;
 // These headers will allow Cross-Origin Resource Sharing (CORS).
 // This code allows this server to talk to websites that
 // are on different domains, for instance, your chat client.
