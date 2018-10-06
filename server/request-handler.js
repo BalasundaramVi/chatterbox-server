@@ -48,8 +48,12 @@ module.exports = function requestHandler(request, response) {
   } else if (request.method === 'POST') {
     statusCode = 201;
     request.on('data', chunk => {
-      data.results.push(chunk.toString());
+      data.results.push(JSON.parse(chunk.toString()));
     });
+  }
+
+  if (request.url !== '/classes/messages') {
+    statusCode = 404;
   }
 
   // See the note below about CORS headers.
@@ -72,8 +76,12 @@ module.exports = function requestHandler(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  console.log('DATA: ', data);
-  response.end(JSON.stringify(data));
+  console.log('DATA: ', data, ' STATUS CODE ', statusCode);
+  if (statusCode === 200 || statusCode === 201) {
+    response.end(JSON.stringify(data));
+  } else if (statusCode === 404) {
+    response.end();
+  }
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
