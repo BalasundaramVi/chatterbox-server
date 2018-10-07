@@ -18,8 +18,8 @@ var FormView = {
     };
 
     Parse.create(message, (data) => {
-      _.extend(message, data);
-      Messages.add(message, MessagesView.render);
+      // _.extend(message, data);
+      // Messages.add(message, MessagesView.render);
     });
   },
 

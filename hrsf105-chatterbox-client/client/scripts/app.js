@@ -6,7 +6,7 @@ var App = {
 
   initialize: function() {
     App.username = window.location.search.substr(10);
-    debugger;
+
     FormView.initialize();
     RoomsView.initialize();
     MessagesView.initialize();
@@ -16,8 +16,8 @@ var App = {
     App.fetch(App.stopSpinner);
 
 
-    // Poll for new messages every 3 sec
-    setInterval(App.fetch, 3000);
+    // Poll for new messages every 1 sec
+    setInterval(App.fetch, 1000);
   },
 
   fetch: function(callback = ()=>{}) {
@@ -28,6 +28,8 @@ var App = {
         callback();
         return; 
       }
+
+      console.log(data);
 
       Rooms.update(data.results, RoomsView.render);
       Messages.update(data.results, MessagesView.render);
