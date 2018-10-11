@@ -18,6 +18,8 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
+var fs = require('fs');
+
 
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
@@ -35,13 +37,17 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-
   // The outgoing status.
-  if (request.method = 'GET') {
-    var statusCode = 200;
-  } else if (request.method = 'POST') {
-    var statusCode = 201;
+  var statusCode;
+  var data;
+  if (request.method === 'GET') {
+    statusCode = 200;
+  } else if (request.method === 'POST') {
+    statusCode = 201;
   }
+
+
+
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
@@ -63,7 +69,7 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify());
+  response.end(JSON.stringify({results: []}));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
